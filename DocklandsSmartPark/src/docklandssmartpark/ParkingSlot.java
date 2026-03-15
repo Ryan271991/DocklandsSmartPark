@@ -32,7 +32,7 @@ public class ParkingSlot implements java.io.Serializable{
         return isOccupied;
     }
 
-    public void setIsOccupied(boolean isOccupied) {
+    public void setOccupied(boolean isOccupied) {
         this.isOccupied = isOccupied;
     }
 
