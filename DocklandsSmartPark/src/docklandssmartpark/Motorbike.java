@@ -8,7 +8,7 @@ package docklandssmartpark;
  *
  * @author huynhlehoang
  */
-public class Motorbike extends Vehicle {
+public class Motorbike extends Vehicle implements java.io.Serializable {
     private int engineSize;
 
     public Motorbike(int engineSize, String vehicleID, String ownerName) {

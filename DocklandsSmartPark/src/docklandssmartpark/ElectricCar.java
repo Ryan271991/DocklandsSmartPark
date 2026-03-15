@@ -8,7 +8,7 @@ package docklandssmartpark;
  *
  * @author huynhlehoang
  */
-public class ElectricCar extends Vehicle {
+public class ElectricCar extends Vehicle implements java.io.Serializable{
     private int batteryLevel;
 
     public ElectricCar(int batteryLevel, String vehicleID, String ownerName) {
