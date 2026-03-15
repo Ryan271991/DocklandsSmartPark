@@ -8,7 +8,7 @@ package docklandssmartpark;
  *
  * @author huynhlehoang
  */
-public class Car extends Vehicle implements java.io.Serializable{
+public class Car extends Vehicle{
     private int numSeats;
 
     public Car(int numSeats, String vehicleID, String ownerName) {
