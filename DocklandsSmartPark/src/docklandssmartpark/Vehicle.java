@@ -4,11 +4,13 @@
  */
 package docklandssmartpark;
 
+import java.io.Serializable;
+
 /**
  *
  * @author huynhlehoang
  */
-public abstract class Vehicle {
+public abstract class Vehicle implements Serializable{
     private String vehicleID;
     private String ownerName;
 
