@@ -4,11 +4,22 @@
  */
 package docklandssmartpark;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author huynhlehoang
  */
 public class DocklandsSmartParkGUI extends javax.swing.JFrame {
+    
+    ParkingLotManager manager;//declare ParkingLotManager of manager objects
+    int numSeats, batteryLevel, engineSize;
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(DocklandsSmartParkGUI.class.getName());
 
@@ -17,6 +28,14 @@ public class DocklandsSmartParkGUI extends javax.swing.JFrame {
      */
     public DocklandsSmartParkGUI() {
         initComponents();
+        manager = new ParkingLotManager();//create ParkingLotManager empty
+        carquestionLbl.setVisible(false);
+        carquestionTF.setVisible(false);
+        electriccarquestionLbl.setVisible(false);
+        electriccarquestionTF.setVisible(false);
+        motorbikequestionLbl.setVisible(false);
+        motorbikequestionTF.setVisible(false);
+        load(); //load data
     }
 
     /**
@@ -28,6 +47,7 @@ public class DocklandsSmartParkGUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        vehicleBG = new javax.swing.ButtonGroup();
         docklandssmartparkLbl = new javax.swing.JLabel();
         carRB = new javax.swing.JRadioButton();
         electriccarRB = new javax.swing.JRadioButton();
@@ -70,14 +90,17 @@ public class DocklandsSmartParkGUI extends javax.swing.JFrame {
         docklandssmartparkLbl.setText("DOCKLANDS SMART PARK");
         getContentPane().add(docklandssmartparkLbl, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 20, -1, -1));
 
+        vehicleBG.add(carRB);
         carRB.setFont(new java.awt.Font("Helvetica Neue", 1, 13)); // NOI18N
         carRB.setText("Car");
         getContentPane().add(carRB, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 50, -1, -1));
 
+        vehicleBG.add(electriccarRB);
         electriccarRB.setFont(new java.awt.Font("Helvetica Neue", 1, 13)); // NOI18N
         electriccarRB.setText("Electric Car");
         getContentPane().add(electriccarRB, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 50, -1, -1));
 
+        vehicleBG.add(motorbikeRB);
         motorbikeRB.setFont(new java.awt.Font("Helvetica Neue", 1, 13)); // NOI18N
         motorbikeRB.setText("Motorbike");
         getContentPane().add(motorbikeRB, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 50, -1, -1));
@@ -111,24 +134,59 @@ public class DocklandsSmartParkGUI extends javax.swing.JFrame {
         getContentPane().add(motorbikequestionTF, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 160, 120, -1));
 
         addslotBtn.setText("Add slot");
+        addslotBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addslotBtnActionPerformed(evt);
+            }
+        });
         getContentPane().add(addslotBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 240, 120, 25));
 
         findslotBtn.setText("Find slot");
+        findslotBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                findslotBtnActionPerformed(evt);
+            }
+        });
         getContentPane().add(findslotBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 300, 120, 25));
 
         removeslotBtn.setText("Remove slot");
+        removeslotBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeslotBtnActionPerformed(evt);
+            }
+        });
         getContentPane().add(removeslotBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 360, 120, 25));
 
         updateslotBtn.setText("Update slot");
+        updateslotBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateslotBtnActionPerformed(evt);
+            }
+        });
         getContentPane().add(updateslotBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 420, 120, 25));
 
         addtoqueueBtn.setText("Add to queue");
+        addtoqueueBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addtoqueueBtnActionPerformed(evt);
+            }
+        });
         getContentPane().add(addtoqueueBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 240, 150, 25));
 
         processqueueBtn.setText("Process queue");
+        processqueueBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                processqueueBtnActionPerformed(evt);
+            }
+        });
         getContentPane().add(processqueueBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 300, 150, 25));
 
         getoccupiedcountBtn.setText("Get occupied count");
+        getoccupiedcountBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                getoccupiedcountBtnActionPerformed(evt);
+            }
+        });
         getContentPane().add(getoccupiedcountBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 360, 150, 25));
 
         displayTA.setColumns(20);
@@ -136,15 +194,35 @@ public class DocklandsSmartParkGUI extends javax.swing.JFrame {
         getContentPane().add(displayTA, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 240, 240, 230));
 
         gethistoryBtn.setText("Get history");
+        gethistoryBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                gethistoryBtnActionPerformed(evt);
+            }
+        });
         getContentPane().add(gethistoryBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 420, 150, 25));
 
         checkinBtn.setText("Check in");
+        checkinBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkinBtnActionPerformed(evt);
+            }
+        });
         getContentPane().add(checkinBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 480, 120, 25));
 
         checkoutBtn.setText("Check out");
+        checkoutBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkoutBtnActionPerformed(evt);
+            }
+        });
         getContentPane().add(checkoutBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 480, 120, 25));
 
         exitBtn.setText("Exit");
+        exitBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exitBtnActionPerformed(evt);
+            }
+        });
         getContentPane().add(exitBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 480, 120, 25));
 
         background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/background.png"))); // NOI18N
@@ -155,6 +233,74 @@ public class DocklandsSmartParkGUI extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    
+    private void save(){
+        
+        try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("parking.dat"))){
+            oos.writeObject(manager);
+            JOptionPane.showMessageDialog(this,"Saved parking.dat successfully" );
+        }catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error saving file " + e.getMessage());
+        }
+    }
+    
+    private void load(){
+        try(ObjectInputStream ois = new ObjectInputStream(new FileInputStream("parking.dat"))){ //open file to read
+            manager = (ParkingLotManager)ois.readObject(); // read data and put result in the parkingSlot
+            JOptionPane.showMessageDialog(this, "File loaded successfully"); // show message
+        } catch (FileNotFoundException e) { //file not found
+            
+        } catch (ClassNotFoundException e) { // class not found (changed name)
+            JOptionPane.showMessageDialog(this, "An error occurred while reading the file. Make sure the class matches the saved data");
+        } catch (IOException e) { //file wrong, wrong format..null
+            JOptionPane.showMessageDialog(this, "An error occurred while reading the file." + e.getMessage());
+            manager = new ParkingLotManager();//if don't have file ==> create list empty to avoid 
+        }
+    }
+    
+    private void addslotBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addslotBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_addslotBtnActionPerformed
+
+    private void findslotBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findslotBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_findslotBtnActionPerformed
+
+    private void removeslotBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeslotBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_removeslotBtnActionPerformed
+
+    private void updateslotBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateslotBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_updateslotBtnActionPerformed
+
+    private void checkinBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkinBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_checkinBtnActionPerformed
+
+    private void checkoutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkoutBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_checkoutBtnActionPerformed
+
+    private void exitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_exitBtnActionPerformed
+
+    private void addtoqueueBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addtoqueueBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_addtoqueueBtnActionPerformed
+
+    private void processqueueBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_processqueueBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_processqueueBtnActionPerformed
+
+    private void getoccupiedcountBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getoccupiedcountBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_getoccupiedcountBtnActionPerformed
+
+    private void gethistoryBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gethistoryBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_gethistoryBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -212,6 +358,7 @@ public class DocklandsSmartParkGUI extends javax.swing.JFrame {
     private javax.swing.JLabel slotidupdateLbl;
     private javax.swing.JTextField slotidupdateTF;
     private javax.swing.JButton updateslotBtn;
+    private javax.swing.ButtonGroup vehicleBG;
     private javax.swing.JLabel vehicleidLbl;
     private javax.swing.JTextField vehicleidTF;
     // End of variables declaration//GEN-END:variables
