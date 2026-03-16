@@ -15,6 +15,8 @@ public class DocklandsSmartPark {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        DocklandsSmartParkGUI mygui = new DocklandsSmartParkGUI();
+        mygui.setVisible(true);
     }
     
 }
