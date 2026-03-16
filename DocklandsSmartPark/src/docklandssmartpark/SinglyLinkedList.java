@@ -4,11 +4,13 @@
  */
 package docklandssmartpark;
 
+import java.io.Serializable;
+
 /**
  *
  * @author huynhlehoang
  */
-public class SinglyLinkedList implements LinearListInterface {
+public class SinglyLinkedList implements LinearListInterface, Serializable {
     
     private Node head;
     private Node currNode;

@@ -4,13 +4,14 @@
  */
 package docklandssmartpark;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author huynhlehoang
  */
-public class MyStack implements StackInterface{
+public class MyStack implements StackInterface, Serializable{
     
     private ArrayList<String> theStack;
     /**

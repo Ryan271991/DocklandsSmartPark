@@ -10,9 +10,9 @@ package docklandssmartpark;
  */
 public interface InterfacePark {
     
-    public void addSlot();
-    public void removeSlot(); 
-    public void updateSlot(); 
-    public void findSlot();
+    public String addSlot(String slotID);
+    public String removeSlot(String slotID); 
+    public String updateSlot(String oldID, String newID); 
+    public String findSlot(String slotID);
     
 }

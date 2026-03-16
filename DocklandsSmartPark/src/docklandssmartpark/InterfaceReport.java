@@ -10,7 +10,7 @@ package docklandssmartpark;
  */
 public interface InterfaceReport {
     
-    public void getHistory(); 
-    public void getOccupiedCount();
+    public String getHistory(); 
+    public String getOccupiedCount();
     
 }

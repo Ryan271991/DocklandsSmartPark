@@ -4,13 +4,14 @@
  */
 package docklandssmartpark;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author huynhlehoang
  */
-public class MyQueue implements QueueInterface{
+public class MyQueue implements QueueInterface, Serializable{
    
     // use ArrayList to stored the Vehicle objects
     private ArrayList<Vehicle> theQueue;

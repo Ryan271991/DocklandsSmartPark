@@ -4,11 +4,13 @@
  */
 package docklandssmartpark;
 
+import java.io.Serializable;
+
 /**
  *
  * @author huynhlehoang
  */
-public class Node {
+public class Node implements Serializable {
     
     private Object element;
     private Node next;
