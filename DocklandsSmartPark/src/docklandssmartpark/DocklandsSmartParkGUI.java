@@ -93,16 +93,31 @@ public class DocklandsSmartParkGUI extends javax.swing.JFrame {
         vehicleBG.add(carRB);
         carRB.setFont(new java.awt.Font("Helvetica Neue", 1, 13)); // NOI18N
         carRB.setText("Car");
+        carRB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                carRBActionPerformed(evt);
+            }
+        });
         getContentPane().add(carRB, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 50, -1, -1));
 
         vehicleBG.add(electriccarRB);
         electriccarRB.setFont(new java.awt.Font("Helvetica Neue", 1, 13)); // NOI18N
         electriccarRB.setText("Electric Car");
+        electriccarRB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                electriccarRBActionPerformed(evt);
+            }
+        });
         getContentPane().add(electriccarRB, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 50, -1, -1));
 
         vehicleBG.add(motorbikeRB);
         motorbikeRB.setFont(new java.awt.Font("Helvetica Neue", 1, 13)); // NOI18N
         motorbikeRB.setText("Motorbike");
+        motorbikeRB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                motorbikeRBActionPerformed(evt);
+            }
+        });
         getContentPane().add(motorbikeRB, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 50, -1, -1));
 
         vehicleidLbl.setText("Vehicle ID:");
@@ -337,14 +352,127 @@ public class DocklandsSmartParkGUI extends javax.swing.JFrame {
 
     private void checkinBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkinBtnActionPerformed
         // TODO add your handling code here:
+        String vehicleID = vehicleidTF.getText().trim();//get data and trim space
+        String ownerName = ownernameTF.getText().trim();//get data and trim space
+        String slotID = slotidTF.getText().trim();//get data and trim space
+        
+         //check empty 
+        if (vehicleID.isEmpty() || ownerName.isEmpty() || slotID.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter all fields");
+            return;
+        }
+        //identify vehicle by radio 
+        Vehicle v;
+        if (carRB.isSelected()){
+            //check empty 
+            if (carquestionTF.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please enter number of seats");
+                return;
+            }
+            // Car(int numSeats, String vehicleID, String ownerName)
+            numSeats = Integer.parseInt(carquestionTF.getText().trim());
+            v = new Car(numSeats, vehicleID, ownerName);
+        }else if (electriccarRB.isSelected()){
+            //check empty 
+            if (electriccarquestionTF.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please enter battery level (%)");
+                return;
+            }
+            // ElectricCar(int batteryLevel, String vehicleID, String ownerName)
+            batteryLevel = Integer.parseInt(electriccarquestionTF.getText().trim());
+            v = new ElectricCar (batteryLevel, vehicleID, ownerName);
+        }else if(motorbikeRB.isSelected()){
+            //check empty 
+            if (motorbikequestionTF.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please enter engine size (cc)");
+                return;
+            }
+            // Motorbike(int engineSize, String vehicleID, String ownerName)
+            engineSize = Integer.parseInt(motorbikequestionTF.getText().trim());
+            v = new Motorbike (engineSize, vehicleID, ownerName);
+        }else{
+            JOptionPane.showMessageDialog(this, "Please select a vehicle type");
+            return;
+        }
+        
+        boolean checkIn = false;
+        SinglyLinkedList slotList = manager.getSlotList();
+        //use loop for
+        for (int i = 1; i <= slotList.size(); i++){
+            ParkingSlot currSlot = (ParkingSlot) slotList.get(i);
+            
+            if(currSlot.getSlotID().equalsIgnoreCase(slotID)){
+                //check isOccupied
+                if(currSlot.isOccupied()){
+                    JOptionPane.showMessageDialog(this,"Slot " + slotID + " is occupied already! Please add another slot");
+                    return;
+                }else{
+                    currSlot.setVehicle(v);
+                    currSlot.setOccupied(true);
+                    checkIn = true;
+                    break;
+                }
+            }
+        }
+        //progress the result
+        if(checkIn == true){
+            manager.getHistoryStack().push("check in: vehicle "+vehicleID + ", Slot "+ slotID);
+            save();
+            //display result
+            displayTA.setText("Checkin successfully slot: " + slotID + "\n"
+                    + "Vehicle ID: " + vehicleID + "\n"
+                    + "Owner: " + ownerName + "\n"
+                    + "Type: " + v.getParkingCategory() + "\n");
+            slotidTF.setText("");
+            ownernameTF.setText("");
+            vehicleidTF.setText("");
+            carquestionTF.setText("");
+            electriccarquestionTF.setText("");
+            motorbikequestionTF.setText("");
+        }else{
+            JOptionPane.showMessageDialog(this, "Slot ID " + slotID + " does not exist");
+        }
     }//GEN-LAST:event_checkinBtnActionPerformed
 
     private void checkoutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkoutBtnActionPerformed
         // TODO add your handling code here:
+        String slotID = slotidTF.getText().trim();
+        //check empty
+        if(slotID.isEmpty()){
+            JOptionPane.showMessageDialog(this,"Please enter Slot ID");
+            return;
+        }
+        boolean found = false;
+        SinglyLinkedList slotList = manager.getSlotList();
+        // find the slot 
+        for (int i = 1; i <= slotList.size(); i++){
+            ParkingSlot currSlot = (ParkingSlot) slotList.get(i);
+            if(currSlot.getSlotID().equalsIgnoreCase(slotID)){
+                found = true;
+                //check isOccupied
+                if (currSlot.isOccupied() == false) {
+                JOptionPane.showMessageDialog(this, "This slot is empty!");
+                return;
+                }
+                Vehicle v = currSlot.getVehicle();
+                currSlot.setVehicle(null);
+                currSlot.setOccupied(false);
+                // save historyStack
+                manager.getHistoryStack().push("Check out: Vehicle "+v.getVehicleID()+" left slot "+slotID);
+                displayTA.setText("Slot "+slotID+ " is empty now");
+                save();
+                slotidTF.setText("");
+                break;
+            }
+        }
+        if (found == false) {
+            JOptionPane.showMessageDialog(this, "Slot " + slotID + " not found.");
+        }
     }//GEN-LAST:event_checkoutBtnActionPerformed
 
     private void exitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitBtnActionPerformed
         // TODO add your handling code here:
+        System.exit(0);
     }//GEN-LAST:event_exitBtnActionPerformed
 
     private void addtoqueueBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addtoqueueBtnActionPerformed
@@ -362,6 +490,36 @@ public class DocklandsSmartParkGUI extends javax.swing.JFrame {
     private void gethistoryBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gethistoryBtnActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_gethistoryBtnActionPerformed
+
+    private void carRBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_carRBActionPerformed
+        // TODO add your handling code here:
+        carquestionLbl.setVisible(true);
+        carquestionTF.setVisible(true);
+        electriccarquestionLbl.setVisible(false);
+        electriccarquestionTF.setVisible(false);
+        motorbikequestionLbl.setVisible(false);
+        motorbikequestionTF.setVisible(false);
+    }//GEN-LAST:event_carRBActionPerformed
+
+    private void electriccarRBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_electriccarRBActionPerformed
+        // TODO add your handling code here:
+        carquestionLbl.setVisible(false);
+        carquestionTF.setVisible(false);
+        electriccarquestionLbl.setVisible(true);
+        electriccarquestionTF.setVisible(true);
+        motorbikequestionLbl.setVisible(false);
+        motorbikequestionTF.setVisible(false);
+    }//GEN-LAST:event_electriccarRBActionPerformed
+
+    private void motorbikeRBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_motorbikeRBActionPerformed
+        // TODO add your handling code here:
+        carquestionLbl.setVisible(false);
+        carquestionTF.setVisible(false);
+        electriccarquestionLbl.setVisible(false);
+        electriccarquestionTF.setVisible(false);
+        motorbikequestionLbl.setVisible(true);
+        motorbikequestionTF.setVisible(true);
+    }//GEN-LAST:event_motorbikeRBActionPerformed
 
     /**
      * @param args the command line arguments
