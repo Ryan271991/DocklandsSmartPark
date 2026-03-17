@@ -47,7 +47,7 @@ public class SinglyLinkedList implements LinearListInterface, Serializable {
     @Override
     public Object get(int index) {
         setCurrent(index);
-        return currNode;
+        return currNode.getElement();
     }
 
     @Override

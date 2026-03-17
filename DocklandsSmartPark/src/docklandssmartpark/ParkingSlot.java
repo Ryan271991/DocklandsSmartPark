@@ -4,11 +4,13 @@
  */
 package docklandssmartpark;
 
+import java.io.Serializable;
+
 /**
  *
  * @author huynhlehoang
  */
-public class ParkingSlot implements java.io.Serializable{
+public class ParkingSlot implements Serializable{
     
     private String slotID;
     private boolean isOccupied;

@@ -88,7 +88,7 @@ public class DocklandsSmartParkGUI extends javax.swing.JFrame {
 
         docklandssmartparkLbl.setFont(new java.awt.Font("Helvetica Neue", 1, 18)); // NOI18N
         docklandssmartparkLbl.setText("DOCKLANDS SMART PARK");
-        getContentPane().add(docklandssmartparkLbl, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 20, -1, -1));
+        getContentPane().add(docklandssmartparkLbl, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 20, -1, -1));
 
         vehicleBG.add(carRB);
         carRB.setFont(new java.awt.Font("Helvetica Neue", 1, 13)); // NOI18N
@@ -106,19 +106,19 @@ public class DocklandsSmartParkGUI extends javax.swing.JFrame {
         getContentPane().add(motorbikeRB, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 50, -1, -1));
 
         vehicleidLbl.setText("Vehicle ID:");
-        getContentPane().add(vehicleidLbl, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 80, -1, -1));
+        getContentPane().add(vehicleidLbl, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 160, -1, -1));
 
         ownernameLbl.setText("Owner name:");
         getContentPane().add(ownernameLbl, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 120, -1, -1));
 
         slotidLbl.setText("Slot ID:");
-        getContentPane().add(slotidLbl, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 160, -1, -1));
+        getContentPane().add(slotidLbl, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 80, -1, -1));
 
         slotidupdateLbl.setText("Slot ID update:");
         getContentPane().add(slotidupdateLbl, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 200, -1, -1));
-        getContentPane().add(vehicleidTF, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 80, 150, -1));
+        getContentPane().add(vehicleidTF, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 160, 150, -1));
         getContentPane().add(ownernameTF, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 120, 150, -1));
-        getContentPane().add(slotidTF, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 160, 150, -1));
+        getContentPane().add(slotidTF, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 80, 150, -1));
         getContentPane().add(slotidupdateTF, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 200, 150, -1));
 
         carquestionLbl.setText("Number of seats:");
@@ -260,18 +260,79 @@ public class DocklandsSmartParkGUI extends javax.swing.JFrame {
     
     private void addslotBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addslotBtnActionPerformed
         // TODO add your handling code here:
+        //get Slot ID from slotidTF
+        String slotID = slotidTF.getText().trim();
+        
+        //check empty
+        if (slotID.isEmpty()){
+            JOptionPane.showMessageDialog(this,"Please enter Slot ID");
+            return;
+        }else{
+            String result = manager.addSlot(slotID);
+            displayTA.setText(result);
+            slotidTF.setText("");
+            ownernameTF.setText("");
+            vehicleidTF.setText("");
+            carquestionTF.setText("");
+            electriccarquestionTF.setText("");
+            motorbikequestionTF.setText("");
+            save();
+        }
     }//GEN-LAST:event_addslotBtnActionPerformed
 
     private void findslotBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findslotBtnActionPerformed
         // TODO add your handling code here:
+        //get Slot ID from slotidTF
+        String slotID = slotidTF.getText().trim();
+        
+        //check empty
+        if (slotID.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter a Slot ID to search.");
+            return;
+        }else{
+            String result = manager.findSlot(slotID);
+            displayTA.setText(result);
+            slotidTF.setText("");
+        }
     }//GEN-LAST:event_findslotBtnActionPerformed
 
     private void removeslotBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeslotBtnActionPerformed
         // TODO add your handling code here:
+        //get Slot ID need to remove
+        String slotID = slotidTF.getText().trim();
+        
+        //check empty
+        if (slotID.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter a Slot ID to remove");
+            return;
+        }else{
+            String result = manager.removeSlot(slotID);
+            displayTA.setText(result);
+            slotidTF.setText("");
+            save();
+        }
     }//GEN-LAST:event_removeslotBtnActionPerformed
 
     private void updateslotBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateslotBtnActionPerformed
         // TODO add your handling code here:
+        // get current slotID what you want to update
+        String oldID = slotidTF.getText().trim();
+        String newID =slotidupdateTF.getText().trim();
+        
+        //check empty
+        if (oldID.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter the Slot ID now");
+            return;
+        }
+        if (newID.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter the Slot ID you want to update");
+            return;
+        }
+        String result = manager.updateSlot(oldID, newID);
+        displayTA.setText(result);
+        slotidTF.setText("");
+        slotidupdateTF.setText("");
+        save();
     }//GEN-LAST:event_updateslotBtnActionPerformed
 
     private void checkinBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkinBtnActionPerformed
