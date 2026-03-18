@@ -28,6 +28,12 @@ public class DocklandsSmartParkGUI extends javax.swing.JFrame {
      */
     public DocklandsSmartParkGUI() {
         initComponents();
+        //Automatic line break when the horizontal dimension is reached (reference: https://stackoverflow.com/questions/26420428/how-to-word-wrap-text-in-jlabel): https://stackoverflow.com/questions/26420428/how-to-word-wrap-text-in-jlabel): https://stackoverflow.com/questions/26420428/how-to-word-wrap-text-in-jlabel)
+        displayTA.setLineWrap(true);
+
+        //Ensure no word breaks midway (reference: https://stackoverflow.com/questions/26420428/how-to-word-wrap-text-in-jlabel)
+        displayTA.setWrapStyleWord(true);
+        
         manager = new ParkingLotManager();//create ParkingLotManager empty
         carquestionLbl.setVisible(false);
         carquestionTF.setVisible(false);
@@ -477,18 +483,81 @@ public class DocklandsSmartParkGUI extends javax.swing.JFrame {
 
     private void addtoqueueBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addtoqueueBtnActionPerformed
         // TODO add your handling code here:
+         //the same check in because addToQueue also needs to know which vehicles (vehicle's information) to add to the queue
+        String vehicleID = vehicleidTF.getText().trim();//get data and trim space
+        String ownerName = ownernameTF.getText().trim();//get data and trim space
+        
+         //check empty 
+        if (vehicleID.isEmpty() || ownerName.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter all fields");
+            return;
+        }
+        //identify vehicle by radio 
+        Vehicle v;
+        if (carRB.isSelected()){
+            //check empty 
+            if (carquestionTF.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please enter number of seats");
+                return;
+            }
+            // Car(int numSeats, String vehicleID, String ownerName)
+            numSeats = Integer.parseInt(carquestionTF.getText().trim());
+            v = new Car(numSeats, vehicleID, ownerName);
+        }else if (electriccarRB.isSelected()){
+            //check empty 
+            if (electriccarquestionTF.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please enter battery level (%)");
+                return;
+            }
+            // ElectricCar(int batteryLevel, String vehicleID, String ownerName)
+            batteryLevel = Integer.parseInt(electriccarquestionTF.getText().trim());
+            v = new ElectricCar (batteryLevel, vehicleID, ownerName);
+        }else if(motorbikeRB.isSelected()){
+            //check empty 
+            if (motorbikequestionTF.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please enter engine size (cc)");
+                return;
+            }
+            // Motorbike(int engineSize, String vehicleID, String ownerName)
+            engineSize = Integer.parseInt(motorbikequestionTF.getText().trim());
+            v = new Motorbike (engineSize, vehicleID, ownerName);
+        }else{
+            JOptionPane.showMessageDialog(this, "Please select a vehicle type");
+            return;
+        }
+        String result = manager.addToQueue(v);
+        displayTA.setText(result);
+        slotidTF.setText("");
+        ownernameTF.setText("");
+        vehicleidTF.setText("");
+        carquestionTF.setText("");
+        electriccarquestionTF.setText("");
+        motorbikequestionTF.setText("");
+        save();
     }//GEN-LAST:event_addtoqueueBtnActionPerformed
 
     private void processqueueBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_processqueueBtnActionPerformed
         // TODO add your handling code here:
+        String result = manager.processQueue();
+        displayTA.setText(result);
+        slotidTF.setText("");
+        ownernameTF.setText("");
+        vehicleidTF.setText("");
+        carquestionTF.setText("");
+        electriccarquestionTF.setText("");
+        motorbikequestionTF.setText("");
     }//GEN-LAST:event_processqueueBtnActionPerformed
 
     private void getoccupiedcountBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getoccupiedcountBtnActionPerformed
         // TODO add your handling code here:
+        String result = manager.getOccupiedCount();
+        displayTA.setText(result);
     }//GEN-LAST:event_getoccupiedcountBtnActionPerformed
 
     private void gethistoryBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gethistoryBtnActionPerformed
         // TODO add your handling code here:
+        String result = manager.getHistory();
+        displayTA.setText(result);
     }//GEN-LAST:event_gethistoryBtnActionPerformed
 
     private void carRBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_carRBActionPerformed
